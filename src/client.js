@@ -1,5 +1,14 @@
 import React from 'react'
+import { Router } from 'react-router'
+import { BrowserRouter } from 'react-router-dom'
+import routes from './routes'
 import ReactDOM from 'react-dom'
-import App from './components/App'
 
-ReactDOM.render(<App />, document.getElementById('react-view'))
+const component = (
+  <BrowserRouter>
+    <div>
+      {routes}
+    </div>
+  </BrowserRouter>
+)
+ReactDOM.render(component, document.getElementById('react-view'))

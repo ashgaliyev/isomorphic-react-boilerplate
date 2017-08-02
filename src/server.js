@@ -1,17 +1,30 @@
 import express from 'express'
 import React from 'react'
 import ReactDom from 'react-dom/server'
-import App from 'components/App'
+import { StaticRouter } from 'react-router'
+import routes from './routes'
 
 const app = express()
 
 app.use((req, res) => {
-  const componentHTML = ReactDom.renderToString(<App />)
+  const context = {}
+  const componentHTML = ReactDom.renderToString(
+    <StaticRouter location={req.url} context={context}>
+      <div>
+        {routes}
+      </div>
+    </StaticRouter>
+  )
 
-  return res.end(renderHTML(componentHTML))
+  if (context.url) {
+    redirect(301, context.url)
+  } else {
+    res.end(renderHTML(componentHTML))
+  }
 })
 
-const assetUrl = process.env.NODE_ENV !== 'production' ? 'http://localhost:8050' : '/'
+const assetUrl =
+  process.env.NODE_ENV !== 'production' ? 'http://localhost:8050' : '/'
 
 function renderHTML(componentHTML) {
   return `
