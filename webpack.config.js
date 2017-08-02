@@ -9,7 +9,7 @@ var publicPath = 'http://localhost:8050/public/assets'
 var cssName =
   process.env.NODE_ENV === 'production' ? 'styles-[hash].css' : 'styles.css'
 var jsName =
-  process.env.NODE_ENV === 'production' ? 'bundle-[hash].css' : 'bundle.css'
+  process.env.NODE_ENV === 'production' ? 'bundle-[hash].js' : 'bundle.js'
 
 var plugins = [
   new webpack.DefinePlugin({
@@ -48,10 +48,10 @@ module.exports = {
     loaders: [
       {
         test: /\.css$/,
-        loader: ExtractTextPlugin.extract(
-          'style-loader',
-          'css-loader!postcss-loader'
-        ),
+        loader: ExtractTextPlugin.extract({
+          use: 'css-loader!postcss-loader',
+          fallback: 'style-loader',
+        }),
       },
       {
         test: /\.less$/,
@@ -70,7 +70,10 @@ module.exports = {
       { test: /\.(woff|woff2|ttf|eot)/, loader: 'url-loader?limit=1' },
       {
         test: /\.jsx?$/,
-        loader: 'babel-loader!eslint-loader',
+        loader:
+          process.env.NODE_ENV !== 'production'
+            ? 'react-hot-loader/webpack!babel-loader!eslint-loader'
+            : 'babel-loader',
         exclude: [/node_modules/, /public/],
       },
       { test: /\.json$/, loader: 'json-loader' },
