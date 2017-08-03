@@ -3,17 +3,22 @@ import React from 'react'
 import ReactDom from 'react-dom/server'
 import { StaticRouter } from 'react-router'
 import routes from './routes'
+import { Provider } from 'react-redux'
+import configureStore from './redux/configureStore'
 
 const app = express()
 
 app.use((req, res) => {
+  const store = configureStore()
   const context = {}
   const componentHTML = ReactDom.renderToString(
-    <StaticRouter location={req.url} context={context}>
-      <div>
-        {routes}
-      </div>
-    </StaticRouter>
+    <Provider store={store}>
+      <StaticRouter location={req.url} context={context}>
+        <div>
+          {routes}
+        </div>
+      </StaticRouter>
+    </Provider>
   )
 
   if (context.url) {
